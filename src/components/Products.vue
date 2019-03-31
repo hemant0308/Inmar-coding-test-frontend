@@ -65,16 +65,16 @@
                 {{product.name}}
               </td>
               <td>
-                {{product.location.name}}
+                {{product.locationName}}
               </td>
               <td>
-                {{product.department.name}}
+                {{product.departmentName}}
               </td>
               <td>
-                {{product.category.name}}
+                {{product.categoryName}}
               </td>
               <td>
-                {{product.subCategory.name}}
+                {{product.subCategoryName}}
               </td>
               <td>
                 <button class="btn btn-sm btn-danger" @click="deleteProduct(product,index)">
@@ -95,7 +95,7 @@
             </tr>
           </tbody>
         </table>
-        <product-form :active-product="activeProduct" :show-modal="showModal" @form-hidden="showModal = false" @product-added="addProduct"></product-form>
+        <product-form :product="activeProduct" :show-modal="showModal" @form-hidden="showModal = false" @add-product="addProduct"></product-form>
       </div>
     </div>
   </div>
@@ -137,7 +137,7 @@ export default {
       },
 
       showModal: false,
-      isLoading : false
+      isLoading: false
     }
   },
   watch: {
@@ -160,9 +160,28 @@ export default {
       let that = this;
       this.isLoading = true;
       productService.getAllProducts(this.filter).then(function(data) {
-        that.products = data.products;
+        var products = [];
+        data.products.forEach(function(product) {
+          products.push(that.parseProduct(product));
+        });
+        that.products = products;
         that.isLoading = false;
       });
+    },
+    parseProduct(product) {
+      return {
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        locationName: product.location.name,
+        locationId: product.location.id,
+        departmentName: product.department.name,
+        departmentId: product.department.id,
+        categoryName: product.category.name,
+        categoryId: product.category.id,
+        subCategoryName: product.subCategory.name,
+        subCategoryId: product.subCategory.id
+      }
     },
     getAllLocations() {
       let that = this;
@@ -188,14 +207,23 @@ export default {
         that.subCategories = data.subCategories;
       });
     },
-    newProduct(){
-      this.activeProduct = null;
+    newProduct() {
+      this.activeProduct = {
+        name: null,
+        sku: null,
+        locationId: null,
+        locationName: null,
+        departmentId: null,
+        departmentName: null,
+        categoryId: null,
+        categoryName: null,
+        subCategoryId: null,
+        subCategoryName: null
+      };
       this.showModal = true;
     },
     addProduct(product) {
-      if (!_.find(this.products, { id: product.id })) {
-        this.products.push(product);
-      }
+      this.products.push(this.parseProduct(product))
     },
     deleteProduct(product, index) {
       let that = this;
@@ -204,14 +232,7 @@ export default {
       })
     },
     editProduct(product) {
-      this.activeProduct = {
-        name: product.name,
-        sku: product.sku,
-        locationId: product.location.id,
-        departmentId: product.department.id,
-        categoryId: product.category.id,
-        subCategoryId: product.subCategory.id
-      };
+      this.activeProduct = product;
       this.showModal = true;
     }
   }

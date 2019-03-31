@@ -77,18 +77,34 @@ export default {
       type: Boolean,
       default: false
     },
-    activeProduct: {
+    product: {
       type: Object,
       default: null
     }
   },
   data() {
     return {
-      product: null,
       locations: [],
-      departments: [],
-      categories: [],
-      subCategories: []
+    }
+  },
+  computed: {
+    departments() {
+      if (this.product) {
+        var location = _.find(this.locations, { id: this.product.locationId });
+        return (location) ? location.departments : [];
+      }
+    },
+    categories() {
+      if (this.product) {
+        var department = _.find(this.departments, { id: this.product.departmentId })
+        return (department) ? (department.categories) : [];
+      }
+    },
+    subCategories() {
+      if (this.product) {
+        var category = _.find(this.categories, { id: this.product.categoryId });
+        return (category) ? (category.subCategories) : []
+      }
     }
   },
   watch: {
@@ -99,79 +115,35 @@ export default {
         $(this.$refs.modal).modal("hide");
       }
     },
-    "product.locationId": function() {
-      this.product.departmentId = this.product.categoryId = this.product.subCategoryId = null;
-      this.getDepartments();
-    },
-    "product.departmentId": function() {
-      this.product.categoryId = this.product.subCategoryId = null;
-      this.getCategories();
-    },
-    "product.categoryId": function() {
-      this.product.subCategoryId = null;
-      this.getSubCategories();
-    },
-    "activeProduct": function() {
-      this.resetForm();
-      _.extend(this.product, this.activeProduct);
-    }
   },
   mounted() {
-    this.getLocations();
+    this.getMetaData();
     let that = this;
     $(this.$refs.modal).on("hidden.bs.modal", function() {
       that.$emit("form-hidden");
     });
-    this.resetForm();
   },
   methods: {
-    resetForm: function() {
-      this.product = {
-        name: null,
-        sku: null,
-        locationId: null,
-        departmentId: null,
-        categoryId: null,
-        subCategoryId: null
-      }
-    },
-    getLocations() {
+    getMetaData() {
       let that = this;
-      locationService.getLocations().then(function(data) {
+      productService.getMetaData().then(function(data) {
         that.locations = data.locations;
-      });
-    },
-    getDepartments() {
-      if (this.product.locationId) {
-        let that = this;
-        departmentService.getDepartments(this.product.locationId).then(function(data) {
-          that.departments = data.departments;
-        });
-      }
-    },
-    getCategories() {
-      if (this.product.locationId && this.product.departmentId) {
-        let that = this;
-        categoryService.getCategories(this.product.locationId, this.product.departmentId).then(function(data) {
-          that.categories = data.categories;
-        });
-      }
-    },
-    getSubCategories() {
-      if (this.product.locationId && this.product.departmentId && this.product.categoryId) {
-        let that = this;
-        subCategoryService.getSubCategories(this.product.locationId, this.product.departmentId, this.product.categoryId).then(function(data) {
-          that.subCategories = data.subCategories;
-        });
-      }
+      })
     },
     saveProduct() {
       let that = this;
       this.$validator.validateAll().then((result) => {
         if (result) {
           productService.saveProduct(this.product).then(function(data) {
-            that.$emit("product-added", data.product);
-            that.activeProduct = null;
+            if (that.product.id) {
+              that.product.id = data.product.id;
+              that.product.locationName = data.product.location.name;
+              that.product.departmentName = data.product.department.name;
+              that.product.categoryName = data.product.category.name;
+              that.product.subCategoryName = data.product.subCategory.name;
+            }else{
+              that.$emit("add-product",data.product);
+            }
             $(that.$refs.modal).modal("hide");
           });
         }
