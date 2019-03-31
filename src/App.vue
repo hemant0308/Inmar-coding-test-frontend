@@ -1,28 +1,40 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">
+        <img src="/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        <img :src="require('./assets/logo.png')" class="logo" alt="">
+      </a>
+      <h1 class="mx-auto" style="color: #dcddcb">Retail store</h1>
+    </nav>
+    <div class="container main-content">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import mappings from './mappings';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+
+  },
+  mounted(){
+    if (!localStorage.getItem("user")) {
+      this.$router.push(mappings.LOGIN_URL);
+    }else{
+      this.$router.push(mappings.ROOT_URL);
+    }
   }
 }
-</script>
 
+</script>
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.logo {
+  height: 50px;
+
 }
+
 </style>
