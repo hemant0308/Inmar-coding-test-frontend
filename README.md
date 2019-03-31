@@ -1,29 +1,9 @@
-# inmar
+# Store Management - Frontend
 
 ## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+- Install vue-cli with `` npm install vue-cli`` command.
+-  Run  ``npm install`` to install dependencies.
+-  Change ``SERVICE_URL`` to your api server url in **src/constants.js** file.
+- Run  ``npm run serve`` To start server locally.
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
