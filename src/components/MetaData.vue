@@ -184,12 +184,18 @@ export default {
     },
     deleteLocation(location, locations) {
       if (location.departments && location.departments.length > 0) {
-        window.alert("Please delete child elements");
+        window.alert("Please delete child elements first.");
         return;
       }
       let that = this;
-      locationService.deleteLocation(location.id).then(function() {
-        that.remove(locations, location);
+      locationService.deleteLocation(location.id).then(function(data) {
+        if (!data.message) {
+          that.remove(locations, location);
+          that.$emit("meta-data-updated");
+        } else {
+          window.alert(data.message);
+        }
+
       });
     },
     getDepartments(location) {
@@ -234,7 +240,12 @@ export default {
       }
       let that = this;
       departmentService.deleteDepartment(department.locationId, department.id).then(function(data) {
-        that.remove(departments, department);
+        if (!data.message) {
+          that.remove(departments, department);
+          that.$emit("meta-data-updated");
+        } else {
+          window.alert(data.message);
+        }
       });
     },
     getCategories(department) {
@@ -275,8 +286,14 @@ export default {
     },
     deleteCategory(category, categories) {
       let that = this;
-      categoryService.deleteCategory(category.locationId, category.departmentId, category.id).then(function() {
-        that.remove(categories, category);
+      categoryService.deleteCategory(category.locationId, category.departmentId, category.id).then(function(data) {
+        if (!data.message) {
+          that.remove(categories, category);
+          that.$emit("meta-data-updated");
+        } else {
+          window.alert(data.message);
+        }
+
       })
     },
     getSubCategories(category) {
@@ -318,8 +335,14 @@ export default {
     },
     deleteSubCategory(subCategory, subCategories) {
       let that = this;
-      subCategoryService.deleteSubCategory(subCategory.locationId, subCategory.departmentId, subCategory.categoryId, subCategory.id).then(function() {
-        that.remove(subCategories, subCategory);
+      subCategoryService.deleteSubCategory(subCategory.locationId, subCategory.departmentId, subCategory.categoryId, subCategory.id).then(function(data) {
+        if (!data.message) {
+          that.remove(subCategories, subCategory);
+          that.$emit("meta-data-updated");
+        } else {
+          window.alert(data.message);
+        }
+
       });
     }
   }

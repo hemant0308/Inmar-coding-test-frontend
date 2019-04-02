@@ -16,10 +16,10 @@
       </nav>
       <div class="tab-content mt-2" id="nav-tabContent">
         <div class="tab-pane fade show active" id="products" role="tabpanel" aria-labelledby="nav-home-tab">
-          <products></products>
+          <products ref="products"></products>
         </div>
         <div class="tab-pane fade" id="meta_data" role="tabpanel" aria-labelledby="nav-profile-tab">
-          <meta-data @meta-data-updated="updateInfographic"></meta-data>
+          <meta-data @meta-data-updated="updateMetadata()"></meta-data>
         </div>
         <div class="tab-pane fade" id="tree_view" role="tabpanel" aria-labelledby="nav-profile-tab">
           <infographic ref="infographic"></infographic>
@@ -61,7 +61,7 @@ export default {
       localStorage.removeItem("user");
       this.$router.push(mappings.LOGIN_URL);
     },
-    updateInfographic() {
+    updateMetadata() {
       this.$refs.infographic.getMetaData();
     }
   }

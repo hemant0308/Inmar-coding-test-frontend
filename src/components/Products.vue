@@ -76,7 +76,7 @@
               <td>
                 {{product.subCategoryName}}
               </td>
-              <td>
+              <td style="min-width: 60px;padding: 5px 0px">
                 <button class="btn btn-sm btn-danger" @click="deleteProduct(product,index)">
                   <i class="fa fa-trash-o"></i>
                 </button>
@@ -95,7 +95,7 @@
             </tr>
           </tbody>
         </table>
-        <product-form :product="activeProduct" :show-modal="showModal" @form-hidden="showModal = false" @add-product="addProduct"></product-form>
+        <product-form :product="activeProduct" :show-modal="showModal" @form-hidden="showModal = false" @add-product="addProduct" ref="productForm"></product-form>
       </div>
     </div>
   </div>
@@ -234,6 +234,14 @@ export default {
     editProduct(product) {
       this.activeProduct = product;
       this.showModal = true;
+    },
+    updateMetaData() {
+      this.getAllProducts();
+      this.getAllSubCategories();
+      this.getAllLocations();
+      this.getAllDepartments();
+      this.getAllCategories();
+      this.$refs.productForm.getMetaData();
     }
   }
 }
