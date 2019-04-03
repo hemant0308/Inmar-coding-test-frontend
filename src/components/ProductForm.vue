@@ -135,16 +135,21 @@ export default {
       this.$validator.validateAll().then((result) => {
         if (result) {
           productService.saveProduct(this.product).then(function(data) {
-            if (that.product.id) {
-              that.product.id = data.product.id;
-              that.product.locationName = data.product.location.name;
-              that.product.departmentName = data.product.department.name;
-              that.product.categoryName = data.product.category.name;
-              that.product.subCategoryName = data.product.subCategory.name;
-            }else{
-              that.$emit("add-product",data.product);
+            if (!data.message) {
+              if (that.product.id) {
+                that.product.id = data.product.id;
+                that.product.locationName = data.product.location.name;
+                that.product.departmentName = data.product.department.name;
+                that.product.categoryName = data.product.category.name;
+                that.product.subCategoryName = data.product.subCategory.name;
+              } else {
+                that.$emit("add-product", data.product);
+              }
+              $(that.$refs.modal).modal("hide");
+
+            } else {
+              window.alert(data.message);
             }
-            $(that.$refs.modal).modal("hide");
           });
         }
       })
